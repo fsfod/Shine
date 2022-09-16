@@ -13,6 +13,7 @@ local pairs = pairs
 local StringFormat = string.format
 local StringStartsWith = string.StartsWith
 local type = type
+local iscfunction = debug.iscfunction
 
 local function ForEachUpValue( Func, Filter, Recursive, Done )
 	local i = 1
@@ -30,7 +31,7 @@ local function ForEachUpValue( Func, Filter, Recursive, Done )
 			return Val, i, Func
 		end
 
-		if Recursive and not Done[ Val ] and type( Val ) == "function" then
+		if Recursive and not Done[ Val ] and type( Val ) == "function" and not iscfunction( Val ) then
 			local LowerVal, j, Function = ForEachUpValue( Val, Filter, true, Done )
 			if LowerVal ~= nil then
 				return LowerVal, j, Function
@@ -297,8 +298,8 @@ end
 function Shine.IsCallable( Object )
 	if type( Object ) == "function" then return true end
 
-	local Meta = DebugGetMetaTable( Object )
-	return not not ( Meta and type( Meta.__call ) == "function" )
+	local Meta = debug.getmetafield( Object, "__call")
+	return not not ( Meta and type( Meta ) == "function" )
 end
 
 --[[

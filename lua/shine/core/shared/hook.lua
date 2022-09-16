@@ -280,9 +280,9 @@ local function GetNumArguments( Func )
 	local Offset = 0
 	if IsType( Func, "table" ) then
 		-- Handle callable tables here too.
-		local Meta = DebugGetMetaTable( Func )
-		if Meta and IsType( Meta.__call, "function" ) then
-			Func = Meta.__call
+		local MetaFunc = debbug.getmetafield(Func, "__call")
+		if MetaFunc and IsType( MetaFunc, "function" ) then
+			Func = MetaFunc
 			-- __call has a self argument which isn't seen by the caller.
 			Offset = 1
 		else
